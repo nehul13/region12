@@ -1,0 +1,8 @@
+{
+    "employeeData": {
+        "getAll": "https://nehulmongodb.herokuapp.com/region",
+        "post": "https://nehulmongodb.herokuapp.com/region",
+        "put": "https://nehulmongodb.herokuapp.com/region",
+        "delete": "https://nehulmongodb.herokuapp.com/region"
+    }
+}
