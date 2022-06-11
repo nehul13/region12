@@ -1,17 +1,18 @@
 import './App.css';
-import { DataGrid, GridActionsCell, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import { GridToolbar } from '@mui/x-data-grid-pro';
 import React from 'react';
 import axios from 'axios';
 import apiUrlMapping from '../src/resources/apiMapping.json';
 import { useEffect } from 'react';
-import { useState } from 'react';
+
 import { Button } from '@mui/material';
 import { TextField } from '@mui/material';
 import { Dialog, DialogContent, DialogActions, DialogTitle} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+
 
 
 
@@ -66,12 +67,13 @@ export default function App() {
   ]
 
   const [rows, setRows] = React.useState([])
-  const [addOrEdit, setAddOrEdit] = React.useState("")
- 
+  const [add, setAdd] = React.useState("")
+  const [edit, setEdit] = React.useState("")
   const [editId, setEditId] = React.useState("")
   
   const handleClickOpen = () => {setOpen(true);};
-  const handleClickOpen2 = () => {setOpenView(true);};
+  
+const handleClickOpen2 = () => {setOpenView(true);};
   const handleClose2 = () => {setOpenView(false);};
   const [openview, setOpenView] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -79,7 +81,9 @@ export default function App() {
   const [city, setcity] 	= React.useState("");
  const [region_Name, setregion_Name] 	= React.useState("");
  const [country_Name, setcountry_Name] 			= React.useState("");
-
+ const handleClose3 = () => {setOpenEdit(false);};
+ const handleClickOpen3 = () => {setOpenEdit(true);};
+ const [openedit, setOpenEdit] = React.useState(false);
  const handleClose = () => {setOpen(false);};
 
   const getAllRecords=()=>
@@ -92,21 +96,31 @@ export default function App() {
 
   const onClickofSaveRecord = () => 
   {
-    setAddOrEdit("Save")
+    setAdd("Save")
+    setregion_Id()
+    setregion_Name()
+    setcity()
+    setcountry_Name()
     handleClickOpen()
   }
 
   useEffect(() => {getAllRecords()}, []);
 
-  const addOrEditRecordAndClose = (type) => 
+  const addAndClose = (type) =>
+  {
+
+    if (type === "Save") { addRecordAndClose(); }
+
+  }
+  const editRecordandclose = (type) => 
   {
     if (type === "Edit") {editRecordAndClose()}
-    if (type === "Save") {addRecordAndClose() }
+  
+    }
    
-  }
   
 
-  const addRecordAndClose = () => 
+  const addRecordAndClose= () => 
   {
     if (region_Id !== undefined && region_Name !== undefined && city !== undefined && country_Name !== undefined )
 	{
@@ -122,12 +136,11 @@ export default function App() {
 	  {
 	  getAllRecords()
         handleClose()
-        setregion_Id("")
-        setregion_Name("")
-        setcity("")
-        setcountry_Name("")
-       
-      })
+        setregion_Id()
+        setregion_Name()
+        setcity()
+        setcountry_Name()
+         })
     }
   }
 
@@ -139,16 +152,16 @@ export default function App() {
   }
   const onclickofEditButton = (e) =>
   {
-   setAddOrEdit("Edit")
+   setEdit("Edit")
    let editRecord = rows[e.id]
    setregion_Id(editRecord.region_Id)
    setregion_Name(editRecord.region_Name)
    setcity(editRecord.city)
    setcountry_Name(editRecord.country_Name)
    setEditId(editRecord._id)
-   handleClickOpen()
+   handleClickOpen3()
   }
-  
+ 
   const editRecordAndClose = () => 
   {
     if (region_Id !== undefined && region_Name !== undefined && city !== undefined && country_Name !== undefined )
@@ -163,7 +176,7 @@ export default function App() {
       axios.put(apiUrlMapping.employeeData.put + "/" + editId, payload).then(response => 
 	  {
 	  getAllRecords();
-    handleClose();
+    handleClose3();
     })
   }  
 }
@@ -210,7 +223,21 @@ const onClickOfViewButton = (e) =>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={() => { addOrEditRecordAndClose(addOrEdit) }}>Save</Button> 
+          <Button onClick={() => { addAndClose(add) }}>Save</Button> 
+        </DialogActions>
+        </Dialog>
+   <Dialog open={openedit} onClose={handleClose3}  >
+        <DialogTitle>Edit Region Data</DialogTitle>
+        <DialogContent>
+          <TextField autoFocus margin="dense" id="region_Id"  onChange={(e) => { setregion_Id(e.target.value) }}value={region_Id}label="region_Id"type="text" fullWidth/>
+          <TextField autoFocus margin="dense" id="region_Name" onChange={(e) => { setregion_Name(e.target.value) }}value={region_Name} label="region_Name" type="text" fullWidth/>
+          <TextField autoFocus margin="dense" id="city" onChange={(e) => { setcity(e.target.value) }} value={city} label="city" type="city" fullWidth/>
+          <TextField autoFocus margin="dense" id="country_Name" onChange={(e) => { setcountry_Name(e.target.value) }} value={country_Name} label="country_Name" type="text" fullWidth/>
+          
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose3}>Cancel</Button>
+          <Button onClick={() => {editRecordandclose(edit) }}>Edit</Button> 
         </DialogActions>
   </Dialog>
   <Dialog open={openview} onClose={handleClose2}>
@@ -231,5 +258,7 @@ const onClickOfViewButton = (e) =>
     </div>
   );
 }
+      
+  
       
   
